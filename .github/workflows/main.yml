@@ -1,0 +1,25 @@
+name: Free RDP
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 360
+    steps:
+    - name: Enable RDP
+      run: |
+        echo "Enabling RDP..."
+        powershell -command "Set-ExecutionPolicy Bypass -Scope Process -Force"
+        powershell -command "Enable-NetFirewallRule -DisplayGroup 'Remote Desktop'"
+        powershell -command "Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0"
+        net user github Password123 /add
+        net localgroup administrators github /add
+        echo "============================================"
+        echo " ✅ RDP is ready! "
+        echo " 👉 Username: github "
+        echo " 👉 Password: Password123 "
+        echo "============================================"
+    - name: Show Public IP
+      run: |
+        curl ifconfig.me 
